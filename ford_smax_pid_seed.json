@@ -1,0 +1,419 @@
+{
+  "project": "ford_smax_pid_catalog_seed",
+  "created_utc": "2026-03-08T08:52:10.460075Z",
+  "notes": [
+    "Seed catalog built from public sources only.",
+    "Contains Ford S-Max generation/engine mapping plus standard OBD-II PIDs that are good initial candidates for UI and live polling.",
+    "Ford/FORScan extended PIDs for submodules (PCM/TCM/ABS/BCM/IPMA/PSCM/etc.) are not publicly standardized; they usually require capture/reverse-engineering from FORScan sessions on the exact vehicle.",
+    "Designed to be hosted on Git and downloaded by a custom ESP32 web UI."
+  ],
+  "adapter_capabilities": {
+    "adapter": "Vgate vLinker MC+",
+    "supports": [
+      "BLE",
+      "ELM/STN command set",
+      "HS-CAN",
+      "MS-CAN",
+      "user-defined protocols"
+    ],
+    "warning": "Adapter access to a network does not guarantee that every proprietary Ford PID is publicly documented or decodable."
+  },
+  "vehicle_family": {
+    "make": "Ford",
+    "model": "S-Max",
+    "production": {
+      "start_year": 2006,
+      "end_year": 2023
+    },
+    "generations": [
+      {
+        "id": "mk1_pre_facelift",
+        "label": "S-Max Mk1 pre-facelift",
+        "years": "2006-2010",
+        "platform_notes": "First generation / EU large MPV",
+        "engine_families": [
+          "2.0 Duratec petrol",
+          "2.3 Duratec petrol",
+          "2.5T petrol",
+          "1.8 TDCi diesel",
+          "2.0 TDCi diesel",
+          "2.2 TDCi diesel"
+        ]
+      },
+      {
+        "id": "mk1_facelift",
+        "label": "S-Max Mk1 facelift",
+        "years": "2010-2014",
+        "platform_notes": "First generation facelift",
+        "engine_families": [
+          "1.6 EcoBoost petrol",
+          "2.0 EcoBoost petrol",
+          "2.0 Duratorq TDCi diesel",
+          "2.2 Duratorq TDCi diesel"
+        ]
+      },
+      {
+        "id": "mk2_initial",
+        "label": "S-Max Mk2 initial launch",
+        "years": "2015-2018",
+        "platform_notes": "Second generation shared family with Galaxy/Mondeo/Edge in Europe",
+        "engine_families": [
+          "1.5 EcoBoost 160",
+          "2.0 EcoBoost 240",
+          "2.0 TDCi 120",
+          "2.0 TDCi 150",
+          "2.0 TDCi 180",
+          "2.0 TDCi Bi-Turbo 210"
+        ]
+      },
+      {
+        "id": "mk2_facelift_ecoblue",
+        "label": "S-Max Mk2 facelift EcoBlue",
+        "years": "2019-2020",
+        "platform_notes": "Diesel-only facelift in many EU markets",
+        "engine_families": [
+          "2.0 EcoBlue 150",
+          "2.0 EcoBlue 180",
+          "2.0 EcoBlue Bi-Turbo 210"
+        ]
+      },
+      {
+        "id": "mk2_hybrid",
+        "label": "S-Max Mk2 hybrid",
+        "years": "2021-2023",
+        "platform_notes": "2.5L full hybrid (HEV)",
+        "engine_families": [
+          "2.5 Hybrid 190"
+        ]
+      }
+    ]
+  },
+  "polling_profiles": [
+    {
+      "id": "standard_fast",
+      "label": "Standard OBD fast dashboard",
+      "target_use": "Works on most S-Max variants via legislated OBD-II",
+      "pids": [
+        {
+          "mode": "01",
+          "pid": "0C",
+          "name": "engine_rpm",
+          "unit": "rpm",
+          "formula": "((A*256)+B)/4",
+          "category": "engine",
+          "priority": "high"
+        },
+        {
+          "mode": "01",
+          "pid": "0D",
+          "name": "vehicle_speed",
+          "unit": "km/h",
+          "formula": "A",
+          "category": "vehicle",
+          "priority": "high"
+        },
+        {
+          "mode": "01",
+          "pid": "05",
+          "name": "coolant_temp",
+          "unit": "°C",
+          "formula": "A-40",
+          "category": "temperature",
+          "priority": "high"
+        },
+        {
+          "mode": "01",
+          "pid": "11",
+          "name": "throttle_position",
+          "unit": "%",
+          "formula": "(A*100)/255",
+          "category": "engine",
+          "priority": "medium"
+        },
+        {
+          "mode": "01",
+          "pid": "0F",
+          "name": "intake_air_temp",
+          "unit": "°C",
+          "formula": "A-40",
+          "category": "temperature",
+          "priority": "medium"
+        },
+        {
+          "mode": "01",
+          "pid": "10",
+          "name": "maf_air_flow",
+          "unit": "g/s",
+          "formula": "((A*256)+B)/100",
+          "category": "air",
+          "priority": "medium"
+        },
+        {
+          "mode": "01",
+          "pid": "42",
+          "name": "control_module_voltage",
+          "unit": "V",
+          "formula": "((A*256)+B)/1000",
+          "category": "electrical",
+          "priority": "high"
+        },
+        {
+          "mode": "01",
+          "pid": "04",
+          "name": "calculated_engine_load",
+          "unit": "%",
+          "formula": "(A*100)/255",
+          "category": "engine",
+          "priority": "medium"
+        },
+        {
+          "mode": "01",
+          "pid": "2F",
+          "name": "fuel_tank_level",
+          "unit": "%",
+          "formula": "(A*100)/255",
+          "category": "fuel",
+          "priority": "medium"
+        },
+        {
+          "mode": "01",
+          "pid": "46",
+          "name": "ambient_air_temp",
+          "unit": "°C",
+          "formula": "A-40",
+          "category": "temperature",
+          "priority": "low"
+        }
+      ]
+    },
+    {
+      "id": "diesel_extended_candidates",
+      "label": "Diesel standard candidate set",
+      "target_use": "More useful on TDCi/EcoBlue models where supported",
+      "pids": [
+        {
+          "mode": "01",
+          "pid": "5E",
+          "name": "engine_fuel_rate",
+          "unit": "L/h",
+          "formula": "((A*256)+B)/20",
+          "category": "fuel",
+          "priority": "medium"
+        },
+        {
+          "mode": "01",
+          "pid": "70",
+          "name": "boost_pressure_control",
+          "unit": "kPa",
+          "formula": "manufacturer_specific_standardized",
+          "category": "boost",
+          "priority": "medium"
+        },
+        {
+          "mode": "01",
+          "pid": "73",
+          "name": "wastegate_control",
+          "unit": "%",
+          "formula": "manufacturer_specific_standardized",
+          "category": "boost",
+          "priority": "low"
+        },
+        {
+          "mode": "01",
+          "pid": "78",
+          "name": "egt_bank1",
+          "unit": "°C",
+          "formula": "special_pid",
+          "category": "exhaust",
+          "priority": "medium"
+        },
+        {
+          "mode": "01",
+          "pid": "79",
+          "name": "egt_bank2",
+          "unit": "°C",
+          "formula": "special_pid",
+          "category": "exhaust",
+          "priority": "low"
+        },
+        {
+          "mode": "01",
+          "pid": "7A",
+          "name": "dpf_differential_pressure",
+          "unit": "kPa",
+          "formula": "special_pid",
+          "category": "emissions",
+          "priority": "medium"
+        },
+        {
+          "mode": "01",
+          "pid": "7B",
+          "name": "dpf_status",
+          "unit": "raw",
+          "formula": "special_pid",
+          "category": "emissions",
+          "priority": "low"
+        },
+        {
+          "mode": "01",
+          "pid": "7C",
+          "name": "dpf_temperature",
+          "unit": "°C",
+          "formula": "special_pid",
+          "category": "emissions",
+          "priority": "medium"
+        }
+      ]
+    },
+    {
+      "id": "hybrid_candidates",
+      "label": "Hybrid candidate set",
+      "target_use": "HEV 2021-2023; standard OBD plus placeholders for Ford proprietary hybrid metrics",
+      "pids": [
+        {
+          "mode": "01",
+          "pid": "5B",
+          "name": "hybrid_battery_remaining_life",
+          "unit": "%",
+          "formula": "(A*100)/255",
+          "category": "hybrid",
+          "priority": "medium"
+        },
+        {
+          "mode": "01",
+          "pid": "42",
+          "name": "control_module_voltage",
+          "unit": "V",
+          "formula": "((A*256)+B)/1000",
+          "category": "electrical",
+          "priority": "high"
+        },
+        {
+          "mode": "22",
+          "pid": "TBD",
+          "name": "hv_battery_soc",
+          "unit": "%",
+          "formula": "TBD_via_forscan_capture",
+          "category": "hybrid",
+          "priority": "high",
+          "status": "unknown"
+        },
+        {
+          "mode": "22",
+          "pid": "TBD",
+          "name": "traction_battery_temp",
+          "unit": "°C",
+          "formula": "TBD_via_forscan_capture",
+          "category": "hybrid",
+          "priority": "high",
+          "status": "unknown"
+        },
+        {
+          "mode": "22",
+          "pid": "TBD",
+          "name": "motor_generator_rpm",
+          "unit": "rpm",
+          "formula": "TBD_via_forscan_capture",
+          "category": "hybrid",
+          "priority": "medium",
+          "status": "unknown"
+        }
+      ]
+    }
+  ],
+  "discovery_blocks": [
+    {
+      "id": "supported_pid_bitmaps",
+      "description": "Use these first to discover which standard PIDs are available on the current vehicle",
+      "requests": [
+        "0100",
+        "0120",
+        "0140",
+        "0160",
+        "0180",
+        "01A0"
+      ]
+    },
+    {
+      "id": "ford_extended_placeholder",
+      "description": "Placeholders for Ford/FORScan extended PID extraction per module; values below are not yet populated from public verified sources",
+      "modules": [
+        {
+          "module": "PCM",
+          "network": "HS-CAN",
+          "profile_status": "to_capture"
+        },
+        {
+          "module": "TCM",
+          "network": "HS-CAN",
+          "profile_status": "to_capture"
+        },
+        {
+          "module": "ABS",
+          "network": "HS-CAN",
+          "profile_status": "to_capture"
+        },
+        {
+          "module": "PSCM",
+          "network": "HS-CAN",
+          "profile_status": "to_capture"
+        },
+        {
+          "module": "BCMii",
+          "network": "MS-CAN",
+          "profile_status": "to_capture"
+        },
+        {
+          "module": "IPC",
+          "network": "MS-CAN",
+          "profile_status": "to_capture"
+        },
+        {
+          "module": "HVAC",
+          "network": "MS-CAN",
+          "profile_status": "to_capture"
+        },
+        {
+          "module": "IPMA",
+          "network": "MS-CAN",
+          "profile_status": "to_capture"
+        },
+        {
+          "module": "SASM",
+          "network": "MS-CAN",
+          "profile_status": "to_capture"
+        },
+        {
+          "module": "APIM",
+          "network": "MS-CAN",
+          "profile_status": "to_capture"
+        },
+        {
+          "module": "SOBDM/HPCM/BECM",
+          "network": "HS-CAN",
+          "profile_status": "hybrid_only_to_capture"
+        }
+      ]
+    }
+  ],
+  "ui_hints": {
+    "group_by": [
+      "generation",
+      "engine_family",
+      "category",
+      "module"
+    ],
+    "safe_defaults": [
+      "engine_rpm",
+      "vehicle_speed",
+      "coolant_temp",
+      "control_module_voltage"
+    ],
+    "require_user_confirmation_for": [
+      "raw AT/ST command sending",
+      "mode 22 proprietary requests",
+      "any write/service routine",
+      "clearing DTCs"
+    ]
+  }
+}
